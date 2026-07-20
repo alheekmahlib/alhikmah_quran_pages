@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="مكتبة الحكمة · القرآن الكريم — قسم القرآن والصوتيات">
+  <!-- السماح بالعمل داخل iframe على نطاقات مواقعنا -->
+  <meta name="referrer" content="no-referrer">
+
+  <title>مكتبة الحكمة · القرآن الكريم</title>
+
+  <style>
+    /* خلفية مبدئية بلون ورقي دافئ مطابق للثيم قبل تحميل Flutter */
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #FBF7EE;
+      font-family: 'Cairo', 'Mada', system-ui, sans-serif;
+    }
+    /* شاشة تحميل بسيطة أثناء تهيئة Flutter */
+    #flutter-loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background-color: #FBF7EE;
+      transition: opacity 0.4s ease;
+    }
+    #flutter-loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .fl-star {
+      width: 48px;
+      height: 48px;
+      color: #C9962B;
+      animation: fl-spin 2s linear infinite;
+    }
+    .fl-text {
+      color: #2A1F12;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    @keyframes fl-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="flutter-loading">
+    <svg class="fl-star" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2L14.39 8.26L21 9.27L16 14.14L17.18 21L12 17.77L6.82 21L8 14.14L3 9.27L9.61 8.26L12 2Z"/>
+    </svg>
+    <div class="fl-text">جارٍ تحميل القرآن الكريم...</div>
+  </div>
+
+  <script>
+    // إخفاء شاشة التحميل بعد بدء Flutter
+    window.addEventListener('flutter-first-frame', function () {
+      var el = document.getElementById('flutter-loading');
+      if (el) {
+        el.classList.add('hidden');
+        setTimeout(function () { el.remove(); }, 500);
+      }
+      // إشعار الموقع الأم بالجاهزية (احتياط إضافي)
+      try {
+        window.parent.postMessage({ type: 'quran:ready' }, '*');
+      } catch (e) {}
+    });
+  </script>
+
+  <!-- bootstrap مخصّص لإجبار CanvasKit (يحل مشكلة الشاشة الرمادية في iframe) -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
